@@ -3,7 +3,7 @@
 * CNI 플러그인 중 하나인 Calico CNI를 사용하며, 3.13 이후 버전 사용 필요
 * Calicoctl도 함께 설치 진행 필요
     * https://www.projectcalico.org/
-* [Calico 듀얼스택에 대한 설치 가이드](https://github.com/tmax-cloud/hypercloud-install-guide/blob/master/CNI/calico_dualstack_v3.15.1.yaml)
+* [Calico 듀얼스택에 대한 설치 가이드](/calico_dualstack_v3.15.1.yaml)
 
 
 ## 구성 요소 및 버전
@@ -13,9 +13,7 @@
 * calico/kube-controllers ([calico/kube-controllers:v3.13.4](https://hub.docker.com/layers/calico/kube-controllers/v3.13.4/images/sha256-49404c910b50bdd93003315d1774c18f445589b1059b24eae2ebaa056c565e8c?context=explore))
 * calico/ctl ([calico/ctl:v3.15.0](https://registry.hub.docker.com/layers/calico/ctl/v3.15.0/images/sha256-09a08c8ef2ef637aadb3d2cc46965b8ba73e0e4cf863c836ad114cc3292822aa?context=explore))
 
-## Prerequisites
-
-## 폐쇄망 설치 가이드
+## 폐쇄망 구축 가이드
 설치를 진행하기 전 아래의 과정을 통해 필요한 이미지 및 yaml 파일을 준비한다.
 1. **폐쇄망에서 설치하는 경우** 사용하는 image repository에 CNI 설치 시 필요한 이미지를 push한다. 
 
@@ -76,7 +74,7 @@
     ```
 
 
-## Install Steps
+## 설치 가이드
 0. [calico.yaml 수정](#step0 "step0")
 1. [calico 설치](#step1 "step1")
 2. [calicoctl 설치](#step2 "step2")
@@ -169,5 +167,6 @@
     EOF
     ```
 
+## 삭제 가이드
 
 
