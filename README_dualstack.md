@@ -1,16 +1,15 @@
 
-# CNI 설치 가이드
-* CNI 플러그인 중 하나인 Calico CNI를 사용하며, 3.13 이후 버전 사용 필요
+# Calico DualStack CNI 설치 가이드
+* Calico CNI를 사용하며, 3.11 이후 버전 사용 필요
 * Calicoctl도 함께 설치 진행 필요
     * https://www.projectcalico.org/
-* [Calico 듀얼스택에 대한 설치 가이드](https://github.com/tmax-cloud/hypercloud-install-guide/blob/master/CNI/calico_dualstack_v3.15.1.yaml)
 
 
 ## 구성 요소 및 버전
-* calico/node ([calico/node:v3.13.4](https://hub.docker.com/layers/calico/node/v3.13.4/images/sha256-2656efc741e90750282ad89b9ec078588b98909e5cd0b8d1256f2059466e1717?context=explore))
-* calico/pod2daemon-flexvol ([calico/pod2daemon-flexvol:v3.13.4](https://hub.docker.com/layers/calico/pod2daemon-flexvol/v3.13.4/images/sha256-3a12c023e964104ebf8af330bc74fa25831e961c871f8024bd6917c1357a57a6?context=explore))
-* calico/cni ([calico/cni:v3.13.4](https://hub.docker.com/layers/calico/cni/v3.13.4/images/sha256-20a74b0c29e57b7e0a3bfd4474e98d3968f3f0edb1f307c9c789b8ed339971db?context=explore))
-* calico/kube-controllers ([calico/kube-controllers:v3.13.4](https://hub.docker.com/layers/calico/kube-controllers/v3.13.4/images/sha256-49404c910b50bdd93003315d1774c18f445589b1059b24eae2ebaa056c565e8c?context=explore))
+* calico/node ([calico/node:v3.15.1](https://hub.docker.com/layers/calico/node/v3.15.1/images/sha256-30f5e5876d53942465bda40f777b31c2cf4da1ac76884a782e77873f3d780c12?context=explore))
+* calico/pod2daemon-flexvol ([calico/pod2daemon-flexvol:v3.15.1](https://hub.docker.com/layers/calico/pod2daemon-flexvol/v3.15.1/images/sha256-180e4a92a556116d2380d02c3c7843a1fc507e9c35986fef4b39cbd6e15dcb00?context=explore))
+* calico/cni ([calico/cni:v3.15.1](https://hub.docker.com/layers/calico/cni/v3.15.1/images/sha256-a925b445c2688fc9c149b20ea04faabd40610d3304a6efda68e5dada7a41b813?context=explore))
+* calico/kube-controllers ([calico/kube-controllers:v3.15.1](https://hub.docker.com/layers/calico/kube-controllers/v3.15.1/images/sha256-092a53ea4e8d2d4498f0364a160752868169dfadedf7144cd820d6b04ddf4161?context=explore))
 * calico/ctl ([calico/ctl:v3.15.0](https://registry.hub.docker.com/layers/calico/ctl/v3.15.0/images/sha256-09a08c8ef2ef637aadb3d2cc46965b8ba73e0e4cf863c836ad114cc3292822aa?context=explore))
 
 ## Prerequisites
@@ -23,7 +22,7 @@
     ```bash
     $ mkdir -p ~/cni-install
     $ export CNI_HOME=~/cni-install
-    $ export CNI_VERSION=v3.13.4
+    $ export CNI_VERSION=v3.15.1
     $ export CTL_VERSION=v3.15.0
     $ export REGISTRY=172.22.8.106:5000
     $ cd $CNI_HOME
@@ -45,7 +44,7 @@
 
     * calico yaml을 다운로드한다. (대역 설정을 위함)
     ```bash
-    $ curl https://raw.githubusercontent.com/tmax-cloud/hypercloud-install-guide/master/CNI/calico_3.13.4.yaml > calico.yaml
+    $ curl https://raw.githubusercontent.com/tmax-cloud/hypercloud-install-guide/master/CNI/calico_dualstack_v3.15.1.yaml > calico.yaml
     ```
 
     * calicoctl yaml을 다운로드한다.
@@ -86,10 +85,29 @@
 
 * 목적 : `calico yaml에 이미지 registry, 버전 정보, pod 대역, IPIP모드 여부를 수정`
 * 생성 순서 : 
-    * 아래의 command를 수정하여 사용하고자 하는 image 버전 정보를 수정한다. (기본 설정 버전은 v3.13.4)
+    * 아래의 command를 수정하여 사용하고자 하는 image 버전 정보를 수정한다. (기본 설정 버전은 v3.15.1) (듀얼스택 기능은 v3.13 이상에서 지원)
 	```bash
-            sed -i 's/v3.13.4/'${CNI_VERSION}'/g' calico.yaml
+            sed -i 's/v3.15.1/'${CNI_VERSION}'/g' calico.yaml
 	```
+    * ipam config에 ipv4, ipv6 주소 할당 설정을 아래와 같이 수정한다.
+  ```bash
+  cni_network_config: |-
+    {
+      "name": "k8s-pod-network",
+      "cniVersion": "0.3.1",
+      "plugins": [
+        {
+          "type": "calico",
+          "log_level": "info",
+          "datastore_type": "kubernetes",
+          "nodename": "__KUBERNETES_NODE_NAME__",
+          "mtu": __CNI_MTU__,
+          "ipam": {
+              "type": "calico-ipam",
+              "assign_ipv4": "true",
+              "assign_ipv6": "true"
+          },
+ ```
 
     * pod 대역과 IPIP 모드를 아래와 같이 수정한다. pod 대역은 kubernetes 설치할때 사용했던 kubeadm-config.yaml의 podSubnet 대역과 동일해야 한다. (다를 경우 문제 발생)
 	```bash
@@ -97,7 +115,16 @@
             value: "Never"            
             - name: CALICO_IPV4POOL_CIDR
             value: "10.0.0.0/16" 
-	```         
+	```   
+    * Felix의 IPv6 지원에 대한 플래그 활성화, pod IPv6 주소 대역을 수정, 노드 IPv6 주소 감지를 설정
+  ```bash
+            - name: FELIX_IPV6SUPPORT
+              value: "true"
+            - name: CALICO_IPV6POOL_CIDR
+              value: "fd00:10:20::/72"
+            - name: IP6
+              value: "autodetect"
+  ```
 
     * master 노드에만 calico-kube-controllers를 띄우기 위해서는 아래와 같은 스케쥴링 옵션을 추가한다. (calico_v.3.13.4_master.yaml 파일 참고)
         * 주의) matchExpressions의 key(kubernetes.io/hostname)의 values에 master 노드의 이름으로 수정
