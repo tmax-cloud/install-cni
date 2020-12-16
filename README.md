@@ -250,3 +250,7 @@
 ## 삭제 가이드
 
 
+* 목적 : `calico 삭제`
+* 삭제 순서: calico.yaml 삭제 적용  `ex) kubectl delete -f calico.yaml`
+* 비고:
+    * iptables 룰 및 tunl0 인터페이스 등의 삭제를 위해 calico.yaml 삭제 후 노드 재부팅 필요
