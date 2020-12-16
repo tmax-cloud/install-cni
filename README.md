@@ -3,7 +3,7 @@
 * CNI 플러그인 중 하나인 Calico CNI를 사용하며, 3.13 이후 버전 사용 필요
 * Calicoctl도 함께 설치 진행 필요
     * https://www.projectcalico.org/
-* [Calico 듀얼스택에 대한 설치 가이드](/calico_dualstack_v3.15.1.yaml)
+* [Calico 듀얼스택에 대한 설치 가이드](#step0.1 "step0.1")
 
 
 ## 구성 요소 및 버전
@@ -75,7 +75,8 @@
 
 
 ## 설치 가이드
-0. [calico.yaml 수정](#step0 "step0")
+0. [calico.yaml 수정](#step0 "step0")   
+0.1. [Dualstack 설치시 calico.yaml 수정](#step0.1 "step0.1")
 1. [calico 설치](#step1 "step1")
 2. [calicoctl 설치](#step2 "step2")
 
@@ -85,21 +86,21 @@
 * 목적 : `calico yaml에 이미지 registry, 버전 정보, pod 대역, IPIP모드 여부를 수정`
 * 생성 순서 : 
     * 아래의 command를 수정하여 사용하고자 하는 image 버전 정보를 수정한다. (기본 설정 버전은 v3.13.4)
-	```bash
+  ```bash
             sed -i 's/v3.13.4/'${CNI_VERSION}'/g' calico.yaml
-	```
+  ```
 
     * pod 대역과 IPIP 모드를 아래와 같이 수정한다. pod 대역은 kubernetes 설치할때 사용했던 kubeadm-config.yaml의 podSubnet 대역과 동일해야 한다. (다를 경우 문제 발생)
-	```bash
+  ```bash
             - name: CALICO_IPV4_IPPOOL_IPIP
             value: "Never"            
             - name: CALICO_IPV4POOL_CIDR
             value: "10.0.0.0/16" 
-	```         
+  ```         
 
     * master 노드에만 calico-kube-controllers를 띄우기 위해서는 아래와 같은 스케쥴링 옵션을 추가한다. (calico_v.3.13.4_master.yaml 파일 참고)
         * 주의) matchExpressions의 key(kubernetes.io/hostname)의 values에 master 노드의 이름으로 수정
-	```bash
+  ```bash
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
 
@@ -119,17 +120,96 @@
               - matchExpressions:
                   - key: node-role.kubernetes.io/master
                     operator: Exists
-	```         
+  ```         
  
 * 비고 :
     * `폐쇄망에서 설치를 진행하여 별도의 image registry를 사용하는 경우 registry 정보를 추가로 설정해준다.`
-	```bash
+  ```bash
             sed -i 's/calico\/cni/'${REGISTRY}'\/calico\/cni/g' calico.yaml
             sed -i 's/calico\/pod2daemon-flexvol/'${REGISTRY}'\/calico\/pod2daemon-flexvol/g' calico.yaml
             sed -i 's/calico\/node/'${REGISTRY}'\/calico\/node/g' calico.yaml
             sed -i 's/calico\/kube-controllers/'${REGISTRY}'\/calico\/kube-controllers/g' calico.yaml
             sed -i 's/calico\/ctl/'${REGISTRY}'\/calico\/ctl/g' calicoctl.yaml
-	```
+  ```
+
+<h2 id="step0.1"> Step0.1. Dualstack 설치시의 calico.yaml 수정 </h2>
+
+* 목적 : `DualStack 설치시 calico yaml에 이미지 registry, 버전 정보, pod 대역, IPIP모드 여부를 수정`
+* 생성 순서 : 
+    * 아래의 command를 수정하여 사용하고자 하는 image 버전 정보를 수정한다. (기본 설정 버전은 v3.13.4) (듀얼스택 기능은 v3.13 이상에서 지원)
+  ```bash
+            sed -i 's/v3.13.4/'${CNI_VERSION}'/g' calico.yaml
+  ```
+    * ipam config에 ipv4, ipv6 주소 할당 설정을 아래와 같이 수정한다.
+  ```bash
+  cni_network_config: |-
+    {
+      "name": "k8s-pod-network",
+      "cniVersion": "0.3.1",
+      "plugins": [
+        {
+          "type": "calico",
+          "log_level": "info",
+          "datastore_type": "kubernetes",
+          "nodename": "__KUBERNETES_NODE_NAME__",
+          "mtu": __CNI_MTU__,
+          "ipam": {
+              "type": "calico-ipam",
+              "assign_ipv4": "true",
+              "assign_ipv6": "true"
+          },
+ ```
+
+    * pod 대역과 IPIP 모드를 아래와 같이 수정한다. pod 대역은 kubernetes 설치할때 사용했던 kubeadm-config.yaml의 podSubnet 대역과 동일해야 한다. (다를 경우 문제 발생)
+  ```bash
+            - name: CALICO_IPV4_IPPOOL_IPIP
+            value: "Never"            
+            - name: CALICO_IPV4POOL_CIDR
+            value: "10.0.0.0/16" 
+  ```   
+    * Felix의 IPv6 지원에 대한 플래그 활성화, pod IPv6 주소 대역을 수정, 노드 IPv6 주소 감지를 설정
+  ```bash
+            - name: FELIX_IPV6SUPPORT
+              value: "true"
+            - name: CALICO_IPV6POOL_CIDR
+              value: "fd00:10:20::/72"
+            - name: IP6
+              value: "autodetect"
+  ```
+
+    * master 노드에만 calico-kube-controllers를 띄우기 위해서는 아래와 같은 스케쥴링 옵션을 추가한다. (calico_v.3.13.4_master.yaml 파일 참고)
+        * 주의) matchExpressions의 key(kubernetes.io/hostname)의 values에 master 노드의 이름으로 수정
+  ```bash
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - kube4
+
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/master
+                    operator: Exists
+  ```         
+ 
+* 비고 :
+    * `폐쇄망에서 설치를 진행하여 별도의 image registry를 사용하는 경우 registry 정보를 추가로 설정해준다.`
+  ```bash
+            sed -i 's/calico\/cni/'${REGISTRY}'\/calico\/cni/g' calico.yaml
+            sed -i 's/calico\/pod2daemon-flexvol/'${REGISTRY}'\/calico\/pod2daemon-flexvol/g' calico.yaml
+            sed -i 's/calico\/node/'${REGISTRY}'\/calico\/node/g' calico.yaml
+            sed -i 's/calico\/kube-controllers/'${REGISTRY}'\/calico\/kube-controllers/g' calico.yaml
+            sed -i 's/calico\/ctl/'${REGISTRY}'\/calico\/ctl/g' calicoctl.yaml
+  ```
 
 <h2 id="step1"> Step 1. calico 설치 </h2>
 
@@ -170,3 +250,7 @@
 ## 삭제 가이드
 
 
+* 목적 : `calico 삭제`
+* 삭제 순서: calico.yaml 삭제 적용  `ex) kubectl delete -f calico.yaml`
+* 비고:
+    * iptables 룰 및 tunl0 인터페이스 등의 삭제를 위해 calico.yaml 삭제 후 노드 재부팅 필요
