@@ -132,7 +132,7 @@
             sed -i 's/calico\/ctl/'${REGISTRY}'\/calico\/ctl/g' calicoctl.yaml
   ```
 
-<h2 id="step0.1"> Step0.1. Dualstack 설치시 calico.yaml 수정 </h2>
+<h2 id="step0.1"> Step0.1. Dualstack 설치시의 calico.yaml 수정 </h2>
 
 * 목적 : `DualStack 설치시 calico yaml에 이미지 registry, 버전 정보, pod 대역, IPIP모드 여부를 수정`
 * 생성 순서 : 
@@ -249,3 +249,8 @@
 
 ## 삭제 가이드
 
+
+* 목적 : `calico 삭제`
+* 삭제 순서: calico.yaml 삭제 적용  `ex) kubectl delete -f calico.yaml`
+* 비고:
+    * iptables 룰 및 tunl0 인터페이스 등의 삭제를 위해 calico.yaml 삭제 후 노드 재부팅 필요
