@@ -645,6 +645,10 @@ spec:
           resources:
             requests:
               cpu: 250m
+              memory: 750Mi
+            limits:
+              cpu: 750m
+              memory: 2Gi
           livenessProbe:
             exec:
               command:
@@ -774,6 +778,13 @@ spec:
               command:
               - /usr/bin/check-status
               - -r
+          resources:
+            requests:
+              cpu: 30m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 300Gi
 
 ---
 
