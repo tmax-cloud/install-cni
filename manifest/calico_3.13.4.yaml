@@ -784,7 +784,7 @@ spec:
               memory: 100Mi
             limits:
               cpu: 100m
-              memory: 300Gi
+              memory: 300Mi
 
 ---
 
