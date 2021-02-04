@@ -642,9 +642,6 @@ spec:
               value: "true"
           securityContext:
             privileged: true
-          resources:
-            requests:
-              cpu: 250m
           livenessProbe:
             exec:
               command:
