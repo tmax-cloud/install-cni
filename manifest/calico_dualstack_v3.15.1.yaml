@@ -3602,9 +3602,6 @@ spec:
               value: "autodetect"
           securityContext:
             privileged: true
-          resources:
-            requests:
-              cpu: 250m
           livenessProbe:
             exec:
               command:
