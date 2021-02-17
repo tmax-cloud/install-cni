@@ -43,12 +43,12 @@
 
     * calico yaml을 다운로드한다. (대역 설정을 위함)
     ```bash
-    $ curl https://raw.githubusercontent.com/tmax-cloud/hypercloud-install-guide/master/CNI/calico_3.13.4.yaml > calico.yaml
+    $ curl https://https://raw.githubusercontent.com/tmax-cloud/install-cni/4.1/manifest/calico_3.13.4.yaml > calico.yaml
     ```
 
     * calicoctl yaml을 다운로드한다.
     ```bash
-    $ curl https://raw.githubusercontent.com/tmax-cloud/hypercloud-install-guide/master/CNI/calicoctl_3.15.0.yaml > calicoctl.yaml
+    $ curl https://raw.githubusercontent.com/tmax-cloud/install-cni/4.1/manifest/calicoctl_3.15.0.yaml > calicoctl.yaml
     ```
 
 
@@ -92,7 +92,7 @@
 
     * pod 대역과 IPIP 모드를 아래와 같이 수정한다. pod 대역은 kubernetes 설치할때 사용했던 kubeadm-config.yaml의 podSubnet 대역과 동일해야 한다. (다를 경우 문제 발생)
   ```bash
-            - name: CALICO_IPV4_IPPOOL_IPIP
+            - name: CALICO_IPV4POOL_IPIP
             value: "Never"            
             - name: CALICO_IPV4POOL_CIDR
             value: "10.0.0.0/16" 
@@ -162,7 +162,7 @@
 
     * pod 대역과 IPIP 모드를 아래와 같이 수정한다. pod 대역은 kubernetes 설치할때 사용했던 kubeadm-config.yaml의 podSubnet 대역과 동일해야 한다. (다를 경우 문제 발생)
   ```bash
-            - name: CALICO_IPV4_IPPOOL_IPIP
+            - name: CALICO_IPV4POOL_IPIP
             value: "Never"            
             - name: CALICO_IPV4POOL_CIDR
             value: "10.0.0.0/16" 
