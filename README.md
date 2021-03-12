@@ -43,7 +43,7 @@
 
     * calico yaml을 다운로드한다. (대역 설정을 위함)
     ```bash
-    $ curl https://https://raw.githubusercontent.com/tmax-cloud/install-cni/4.1/manifest/calico_3.13.4.yaml > calico.yaml
+    $ curl https://raw.githubusercontent.com/tmax-cloud/install-cni/4.1/manifest/calico_3.13.4.yaml > calico.yaml
     ```
 
     * calicoctl yaml을 다운로드한다.
