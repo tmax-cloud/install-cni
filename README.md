@@ -85,7 +85,7 @@
 * 생성 순서 : 
     * 아래의 command를 수정하여 사용하고자 하는 image 버전 정보를 수정한다. (기본 설정 버전은 v3.16.6)
 	```bash
-    sed -i 's/v3.16.6/'${CNI_VERSION}'/g' calico.yaml
+   sed -i 's/v3.16.6/'${CNI_VERSION}'/g' calico.yaml
 	```
 
     * pod 대역과 IPIP 모드를 아래와 같이 수정한다. pod 대역은 kubernetes 설치할때 사용했던 kubeadm-config.yaml의 podSubnet 대역과 동일해야 한다. (다를 경우 문제 발생)
@@ -123,11 +123,11 @@
 * 비고 :
     * `폐쇄망에서 설치를 진행하여 별도의 image registry를 사용하는 경우 registry 정보를 추가로 설정해준다.`
 	```bash
-    sed -i 's/calico\/cni/'${REGISTRY}'\/calico\/cni/g' calico.yaml
-    sed -i 's/calico\/pod2daemon-flexvol/'${REGISTRY}'\/calico\/pod2daemon-flexvol/g' calico.yaml
-    sed -i 's/calico\/node/'${REGISTRY}'\/calico\/node/g' calico.yaml
-    sed -i 's/calico\/kube-controllers/'${REGISTRY}'\/calico\/kube-controllers/g' calico.yaml
-    sed -i 's/calico\/ctl/'${REGISTRY}'\/calico\/ctl/g' calicoctl.yaml
+   sed -i 's/calico\/cni/'${REGISTRY}'\/calico\/cni/g' calico.yaml
+   sed -i 's/calico\/pod2daemon-flexvol/'${REGISTRY}'\/calico\/pod2daemon-flexvol/g' calico.yaml
+   sed -i 's/calico\/node/'${REGISTRY}'\/calico\/node/g' calico.yaml
+   sed -i 's/calico\/kube-controllers/'${REGISTRY}'\/calico\/kube-controllers/g' calico.yaml
+   sed -i 's/calico\/ctl/'${REGISTRY}'\/calico\/ctl/g' calicoctl.yaml
 	```
 
 <h2 id="step1"> Step 1. calico 설치 </h2>
