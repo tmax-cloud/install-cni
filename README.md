@@ -40,6 +40,7 @@
     $ sudo docker save calico/ctl:${CTL_VERSION} > calico-ctl_${CTL_VERSION}.tar
     ```
 
+2. 필요한 yaml을 다운로드한다.
     * calico yaml을 다운로드한다. (대역 설정을 위함)
     ```bash
     $ curl https://raw.githubusercontent.com/tmax-cloud/install-cni/5.0/manifest/calico_v3.16.6.yaml > calico.yaml
@@ -51,7 +52,7 @@
     ```
 
 
-2. 위의 과정에서 생성한 tar 파일들을 폐쇄망 환경으로 이동시킨 뒤 사용하려는 registry에 이미지를 push한다.
+3. 과정1. 에서 생성한 tar 파일들을 폐쇄망 환경으로 이동시킨 뒤 사용하려는 registry에 이미지를 push한다.
     ```bash
     $ sudo docker load < calico-node_${CNI_VERSION}.tar
     $ sudo docker load < calico-pod2daemon-flexvol_${CNI_VERSION}.tar
@@ -77,6 +78,8 @@
 0. [calico.yaml 수정](#step0 "step0")   
 1. [calico 설치](#step1 "step1")
 2. [calicoctl 설치](#step2 "step2")
+
+* 설치 스크립트를 이용하여 설치할 경우, manifest/README.md 를 참고해주세요.
 
 
 <h2 id="step0"> Step0. calico yaml 수정 </h2>
