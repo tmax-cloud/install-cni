@@ -149,7 +149,7 @@
 * 비고 :
     * kube-system 네임스페이스 사용
     * calicoctl (1개의 pod)
-    * alias calicoctl="kubectl exec -i -n kube-system calicoctl --/calicoctl "
+    * alias calicoctl="kubectl exec -i -n kube-system calicoctl -- /calicoctl "
 
 
 ## calico 장애 해결
