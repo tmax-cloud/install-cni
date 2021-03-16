@@ -7,8 +7,7 @@ yaml_dir="${install_dir}/yaml"
 function init() {
     echo "---Initialize CNI environment---"
     if [[ -z ${registry} ]]; then
-        echo "registry is empty, exit"
-        exit 100
+        registry=""
     else
         registry=${registry}
     fi
@@ -44,12 +43,14 @@ function init() {
     # Set Pod CIDR
     sed -i '/CALICO_IPV4POOL_CIDR/{n;s|^\([[:space:]]\+value:\).*|\1 '\"${pod_cidr}\"'|}' ${yaml_dir}/calico.yaml
 
-    # Set registry address
-    sed -i 's/calico\/cni/'${registry}'\/calico\/cni/g' ${yaml_dir}/calico.yaml
-    sed -i 's/calico\/pod2daemon-flexvol/'${registry}'\/calico\/pod2daemon-flexvol/g' ${yaml_dir}/calico.yaml
-    sed -i 's/calico\/node/'${registry}'\/calico\/node/g' ${yaml_dir}/calico.yaml
-    sed -i 's/calico\/kube-controllers/'${registry}'\/calico\/kube-controllers/g' ${yaml_dir}/calico.yaml
-    sed -i 's/calico\/ctl/'${registry}'\/calico\/ctl/g' ${yaml_dir}/calicoctl.yaml
+    # Set registry address when exists
+    if [[ ! -z ${registry} ]]; then
+        sed -i 's/calico\/cni/'${registry}'\/calico\/cni/g' ${yaml_dir}/calico.yaml
+        sed -i 's/calico\/pod2daemon-flexvol/'${registry}'\/calico\/pod2daemon-flexvol/g' ${yaml_dir}/calico.yaml
+        sed -i 's/calico\/node/'${registry}'\/calico\/node/g' ${yaml_dir}/calico.yaml
+        sed -i 's/calico\/kube-controllers/'${registry}'\/calico\/kube-controllers/g' ${yaml_dir}/calico.yaml
+        sed -i 's/calico\/ctl/'${registry}'\/calico\/ctl/g' ${yaml_dir}/calicoctl.yaml
+    fi
 
     echo "---CNI initialization complete---"
 }
