@@ -10,7 +10,6 @@
     * 환경에 맞는 config 내용을 작성합니다.
         * registry={IP:PORT}
             * 폐쇄망에서의 image registry 정보를 설정합니다.
-            * 해당 값이 입력되지 않을 경우, CNI 설치가 진행되지 않습니다.
             * ex) registry=172.22.8.106:5000
         * cni_version={CNI_VERSION}
             * ex) cni_version=v3.16.6
