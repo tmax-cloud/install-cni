@@ -43,6 +43,9 @@ function init() {
     # Set Pod CIDR
     sed -i '/CALICO_IPV4POOL_CIDR/{n;s|^\([[:space:]]\+value:\).*|\1 '\"${pod_cidr}\"'|}' ${yaml_dir}/calico.yaml
 
+    # Set IP_AUTODETECTION_METHOD
+    sed -i '/IP_AUTODETECTION_METHOD/{n;s|^\([[:space:]]\+value:\).*|\1 '\"${pod_cidr}\"'|}' ${yaml_dir}/calico.yaml
+
     # Set registry address when exists
     if [[ ! -z ${registry} ]]; then
         sed -i 's/calico\/cni/'${registry}'\/calico\/cni/g' ${yaml_dir}/calico.yaml
