@@ -612,6 +612,9 @@ spec:
             # Auto-detect the BGP IP address.
             - name: IP
               value: "autodetect"
+            # IP autodetection mode
+            - name: IP_AUTODETECTION_METHOD
+              value: "10.0.0.0/16"
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
               value: "Never"
