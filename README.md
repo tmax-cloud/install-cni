@@ -102,7 +102,7 @@
     * calico-node가 pod IP 대역을 제대로 잡을 수 있게 해당 필드를 수정한다. pod 대역은 kubernetes 설치할때 사용했던 kubeadm-config.yaml의 podSubnet 대역과 동일해야 한다. (다를 경우 문제 발생)
   ```bash
             - name: IP_AUTODETECTION_METHOD
-              value: "10.0.0.0/16"
+              value: "cidr=10.0.0.0/16"
   ```
 
     * master 노드에만 calico-kube-controllers를 띄우기 위해서는 아래와 같은 스케쥴링 옵션을 추가한다. (calico_v3.16.6_master.yaml 파일 참고)
