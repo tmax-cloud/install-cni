@@ -31,6 +31,13 @@ function init() {
         pod_cidr=${pod_cidr}
     fi
 
+    if [[ -z ${node_cidr} ]]; then
+        node_cidr=first-found
+    else
+        node_cidr=cidr\=${node_cidr}
+    fi
+
+
     # Change calico image version
     sed -i 's|v3.16.6|'${cni_version}'|g' ${yaml_dir}/calico.yaml
 
@@ -44,7 +51,7 @@ function init() {
     sed -i '/CALICO_IPV4POOL_CIDR/{n;s|^\([[:space:]]\+value:\).*|\1 '\"${pod_cidr}\"'|}' ${yaml_dir}/calico.yaml
 
     # Set IP_AUTODETECTION_METHOD
-    sed -i '/IP_AUTODETECTION_METHOD/{n;s|^\([[:space:]]\+value:\).*|\1 '\"${pod_cidr}\"'|}' ${yaml_dir}/calico.yaml
+    sed -i '/IP_AUTODETECTION_METHOD/{n;s|^\([[:space:]]\+value:\).*|\1 '\"${node_cidr}\"'|}' ${yaml_dir}/calico.yaml
 
     # Set registry address when exists
     if [[ ! -z ${registry} ]]; then
