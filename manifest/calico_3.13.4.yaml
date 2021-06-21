@@ -614,7 +614,7 @@ spec:
               value: "autodetect"
             # IP autodetection mode
             - name: IP_AUTODETECTION_METHOD
-              value: "10.0.0.0/16"
+              value: "first-found"
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
               value: "Never"
