@@ -19,6 +19,10 @@
             * podSubnet은 kubernetes 설치 시 사용했던 kubeadm-config.yaml의 podSubnet 대역과 동일해야합니다. (다를 경우 문제 발생)
             * 해당 값이 입력되지 않을 경우, CNI 설치가 진행되지 않습니다.
             * ex) pod_cidr=10.0.0.0/16
+        * node_cidr={nodeSubnet}
+            * nodeSubnet은 node의 NIC이 여러개일 경우, calico-node가 BGP peering을 맺을 node IP 대역입니다.
+            * NIC이 하나일 경우, 입력하지 않아도 무방합니다.
+            * ex) node_cidr="cidr=192.168.0.0/24"
 
 ## Step2. install
 * 목적: `Calico 및 calicoctl 설치를 위한 shell script 실행`
